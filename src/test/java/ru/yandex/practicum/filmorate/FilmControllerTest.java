@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FilmControllerTest {
     FilmController filmController = new FilmController();
 
-    @BeforeAll
-     static void init() {
-        FilmorateApplication.main(new String[]{});
-    }
+//    @BeforeAll
+//     static void init() {
+//        FilmorateApplication.main(new String[]{});
+//    }
 
     @DisplayName("Должнен быть добавлен фильм")
     @Test
