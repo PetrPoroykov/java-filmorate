@@ -32,7 +32,7 @@ public class UserControllerTest {
 
     @DisplayName("Должно выбросываться исключение DateIsNotValidException когда дата рождения указана в будующем")
     @Test
-    public void ShouldBeThrownDateIsNotValidExceptionWhenDateBirthInFuture() {
+    public void shouldBeThrownDateIsNotValidExceptionWhenDateBirthInFuture() {
         DateIsNotValidException exc = Assertions.assertThrows(DateIsNotValidException.class, () -> {
             User user = new User();
             user.setEmail("www@ttt");
@@ -47,7 +47,7 @@ public class UserControllerTest {
     @DisplayName("Должно выбросываться исключение ConditionsNotMetException " +
             "когда нет Email.")
     @Test
-    public void ShouldBeThrownConditionsNotMetExceptionWhenEmfilIsEmpty() {
+    public void shouldBeThrownConditionsNotMetExceptionWhenEmfilIsEmpty() {
         ConditionsNotMetException exc = Assertions.assertThrows(ConditionsNotMetException.class, () -> {
             User user = new User();
             user.setEmail("");
@@ -62,7 +62,7 @@ public class UserControllerTest {
     @DisplayName("Должно выбросываться исключение ConditionsNotMetException " +
             "когда в  Email нет знак @.")
     @Test
-    public void ShouldBeThrownConditionsNotMetExceptionWhenEmailDoesNotContainAt() {
+    public void shouldBeThrownConditionsNotMetExceptionWhenEmailDoesNotContainAt() {
         ConditionsNotMetException exc = Assertions.assertThrows(ConditionsNotMetException.class, () -> {
             User user = new User();
             user.setEmail("wwwttt");
@@ -77,7 +77,7 @@ public class UserControllerTest {
     @DisplayName("Должно выбросываться исключение ConditionsNotMetException " +
             "когда Login пустой.")
     @Test
-    public void ShouldBeThrownConditionsNotMetExceptionWhenLoginIsEmpty() {
+    public void shouldBeThrownConditionsNotMetExceptionWhenLoginIsEmpty() {
         ConditionsNotMetException exc = Assertions.assertThrows(ConditionsNotMetException.class, () -> {
             User user = new User();
             user.setEmail("w@e");
@@ -92,7 +92,7 @@ public class UserControllerTest {
     @DisplayName("Должно выбросываться исключение ConditionsNotMetException " +
             "когда Login содержит пробел.")
     @Test
-    public void ShouldBeThrownConditionsNotMetExceptionWhenLoginСontainsSpace() {
+    public void shouldBeThrownConditionsNotMetExceptionWhenLoginСontainsSpace() {
         ConditionsNotMetException exc = Assertions.assertThrows(ConditionsNotMetException.class, () -> {
             User user = new User();
             user.setEmail("w@e");
@@ -106,7 +106,7 @@ public class UserControllerTest {
 
     @DisplayName("Имя должно использовать логин если имя пустое")
     @Test
-    public void ShouldBeNameIsEquivalentToLoginWhenNameIsEmpty() {
+    public void shouldBeNameIsEquivalentToLoginWhenNameIsEmpty() {
         User user = new User();
         user.setEmail("w@e");
         user.setLogin("rrriii");
