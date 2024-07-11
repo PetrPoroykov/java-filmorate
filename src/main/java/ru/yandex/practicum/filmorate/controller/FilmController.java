@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.ValidateService;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.Map;
 public class FilmController {
 
     private final Map<Long, Film> films = new HashMap<>();
-    private  static final Logger log = LoggerFactory.getLogger(FilmController.class);
+    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @GetMapping
     public Collection<Film> findAll() {
@@ -26,18 +26,8 @@ public class FilmController {
     @PostMapping
     public Film create(@RequestBody Film film) {
 
-        if (film.getName() == null || film.getName().isBlank()) {
-            throw new ConditionsNotMetException("Название не может быть пустым");
-        }
-        if (film.getDescription().length() > 200) {
-            throw new LengthOfFieldIsNotValidException("Длина описания превышает 200 знаков");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new DateIsNotValidException("Дата релиза должна быть позже 28 декабря 1895 года");
-        }
-        if (film.getDuration() <= 0) {
-            throw new InvalidNumericValueException("Продолжительность фильма должна быть положительным числом");
-        }
+        ValidateService.validateFilm(film);
+
         film.setId(getNextId());
 
         films.put(film.getId(), film);
@@ -53,18 +43,9 @@ public class FilmController {
         }
         if (films.containsKey(newFilm.getId())) {
             Film oldFilm = films.get(newFilm.getId());
-            if (newFilm.getName() == null || newFilm.getName().isBlank()) {
-                throw new ConditionsNotMetException("Название не может быть пустым");
-            }
-            if (newFilm.getDescription().length() > 200) {
-                throw new LengthOfFieldIsNotValidException("Длина описания превышает 200 знаков");
-            }
-            if (newFilm.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-                throw new DateIsNotValidException("Дата релиза должна быть позже 28 декабря 1895 года");
-            }
-            if (newFilm.getDuration() <= 0) {
-                throw new InvalidNumericValueException("Продолжительность фильма должна быть положительным числом");
-            }
+
+            ValidateService.validateFilm(newFilm);
+
             oldFilm.setName(newFilm.getName());
             oldFilm.setDescription(newFilm.getDescription());
             oldFilm.setReleaseDate(newFilm.getReleaseDate());

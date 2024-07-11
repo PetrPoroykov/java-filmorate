@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.ValidateService;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.Map;
 public class UserController {
 
     private final Map<Long, User> users = new HashMap<>();
-    private  static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping
     public Collection<User> findAll() {
@@ -26,18 +26,7 @@ public class UserController {
     @PostMapping
     public User create(@RequestBody User user) {
 
-        if (user.getEmail() == null || user.getEmail().isBlank() || user.getEmail().indexOf('@') == -1) {
-            throw new ConditionsNotMetException("Email не может быть пустым и должен содержать символ @");
-        }
-        if (user.getLogin() == null || user.getLogin().isBlank() || !(user.getLogin().indexOf(' ') == -1)) {
-            throw new ConditionsNotMetException("Login не может быть пустым и  не должен  содержать пробел");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new DateIsNotValidException("Дата рождения не может быть в будущем");
-        }
+        ValidateService.validateUser(user);
 
         user.setId(getNextId());
 
@@ -55,18 +44,7 @@ public class UserController {
         if (users.containsKey(newUser.getId())) {
             User oldUser = users.get(newUser.getId());
 
-            if (newUser.getEmail() == null || newUser.getEmail().isBlank() || newUser.getEmail().indexOf('@') == -1) {
-                throw new ConditionsNotMetException("Email не может быть пустым и должен содержать символ @");
-            }
-            if (newUser.getLogin() == null || newUser.getLogin().isBlank() || !(newUser.getLogin().indexOf(' ') == -1)) {
-                throw new ConditionsNotMetException("Login не может быть пустым и  не должен  содержать пробел");
-            }
-            if (newUser.getName() == null || newUser.getName().isBlank()) {
-                newUser.setName(newUser.getLogin());
-            }
-            if (newUser.getBirthday().isAfter(LocalDate.now())) {
-                throw new DateIsNotValidException("Дата рождения не может быть в будущем");
-            }
+            ValidateService.validateUser(newUser);
 
             oldUser.setEmail(newUser.getEmail());
             oldUser.setLogin(newUser.getLogin());
