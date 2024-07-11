@@ -12,7 +12,7 @@ public class UserControllerTest {
     UserController userController = new UserController();
 
     @BeforeAll
-    static void init() {
+    public static void init() {
         FilmorateApplication.main(new String[]{});
     }
 

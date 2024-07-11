@@ -16,7 +16,7 @@ public class FilmControllerTest {
     FilmController filmController = new FilmController();
 
     @BeforeAll
-    static void init() {
+     static void init() {
         FilmorateApplication.main(new String[]{});
     }
 
