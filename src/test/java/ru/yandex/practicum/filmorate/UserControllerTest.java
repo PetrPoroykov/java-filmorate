@@ -11,10 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UserControllerTest {
     UserController userController = new UserController();
 
-//    @BeforeAll
-//    public static void init() {
-//        FilmorateApplication.main(new String[]{});
-//    }
+
 
     @DisplayName("Должнен быть добавлен пользователь")
     @Test
