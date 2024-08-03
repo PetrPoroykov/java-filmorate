@@ -1,0 +1,19 @@
+package ru.yandex.practicum.filmorate.service;
+
+import lombok.Data;
+import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
+
+@Component
+@Data
+public class FilmService {
+
+    public void addLike(Film film, User user) {
+        film.getLikes().add(user.getId());
+    }
+
+    public void deleteLike(Film film, User user) {
+        film.getLikes().remove(user.getId());
+    }
+}

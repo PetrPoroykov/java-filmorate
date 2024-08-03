@@ -1,15 +1,22 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.*;
+import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
-import ru.yandex.practicum.filmorate.exception.DateIsNotValidException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserControllerTest {
-    UserController userController = new UserController();
+    private InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
+    private UserController userController = new UserController( inMemoryUserStorage);
 
 
 
@@ -21,31 +28,31 @@ public class UserControllerTest {
         user.setLogin("qwerty");
         user.setName("Ivan");
         user.setBirthday((LocalDate.of(1995, 12, 28)));
-        int countUser = userController.findAll().size();
+        int countUser = inMemoryUserStorage.findAll().size();
         userController.create(user);
-        int countUserNew = userController.findAll().size();
+        int countUserNew = inMemoryUserStorage.findAll().size();
         assertEquals(countUser + 1, countUserNew, "Неверное количество фильмов");
     }
 
-    @DisplayName("Должно выбросываться исключение DateIsNotValidException когда дата рождения указана в будующем")
+    @DisplayName("Должно выбросываться исключение ValidationException когда дата рождения указана в будующем")
     @Test
-    public void shouldBeThrownDateIsNotValidExceptionWhenDateBirthInFuture() {
-        DateIsNotValidException exc = Assertions.assertThrows(DateIsNotValidException.class, () -> {
+    public void shouldBeThrownValidationExceptionWhenDateBirthInFuture() {
+        ValidationException exc = Assertions.assertThrows(ValidationException.class, () -> {
             User user = new User();
             user.setEmail("www@ttt");
             user.setLogin("qwerty");
             user.setName("Ivan");
-            user.setBirthday((LocalDate.of(2024, 7, 30)));
+            user.setBirthday((LocalDate.of(2024, 12, 30)));
             userController.create(user);
         });
         assertEquals("Дата рождения не может быть в будущем", exc.getMessage());
     }
 
-    @DisplayName("Должно выбросываться исключение ConditionsNotMetException " +
+    @DisplayName("Должно выбросываться исключение ValidationException " +
             "когда нет Email.")
     @Test
-    public void shouldBeThrownConditionsNotMetExceptionWhenEmfilIsEmpty() {
-        ConditionsNotMetException exc = Assertions.assertThrows(ConditionsNotMetException.class, () -> {
+    public void shouldBeThrownValidationExceptionEmfilIsEmpty() {
+        ValidationException exc = Assertions.assertThrows(ValidationException.class, () -> {
             User user = new User();
             user.setEmail("");
             user.setLogin("qwerty");
@@ -56,11 +63,11 @@ public class UserControllerTest {
         assertEquals("Email не может быть пустым и должен содержать символ @", exc.getMessage());
     }
 
-    @DisplayName("Должно выбросываться исключение ConditionsNotMetException " +
+    @DisplayName("Должно выбросываться исключение ValidationException " +
             "когда в  Email нет знак @.")
     @Test
-    public void shouldBeThrownConditionsNotMetExceptionWhenEmailDoesNotContainAt() {
-        ConditionsNotMetException exc = Assertions.assertThrows(ConditionsNotMetException.class, () -> {
+    public void shouldBeThrownValidationExceptionWhenEmailDoesNotContainAt() {
+        ValidationException exc = Assertions.assertThrows(ValidationException.class, () -> {
             User user = new User();
             user.setEmail("wwwttt");
             user.setLogin("qwerty");
@@ -71,11 +78,11 @@ public class UserControllerTest {
         assertEquals("Email не может быть пустым и должен содержать символ @", exc.getMessage());
     }
 
-    @DisplayName("Должно выбросываться исключение ConditionsNotMetException " +
+    @DisplayName("Должно выбросываться исключение ValidationException " +
             "когда Login пустой.")
     @Test
-    public void shouldBeThrownConditionsNotMetExceptionWhenLoginIsEmpty() {
-        ConditionsNotMetException exc = Assertions.assertThrows(ConditionsNotMetException.class, () -> {
+    public void shouldBeThrownValidationExceptionWhenLoginIsEmpty() {
+        ValidationException exc = Assertions.assertThrows(ValidationException.class, () -> {
             User user = new User();
             user.setEmail("w@e");
             user.setLogin("");
@@ -86,11 +93,11 @@ public class UserControllerTest {
         assertEquals("Login не может быть пустым и  не должен  содержать пробел", exc.getMessage());
     }
 
-    @DisplayName("Должно выбросываться исключение ConditionsNotMetException " +
+    @DisplayName("Должно выбросываться исключение ValidationException " +
             "когда Login содержит пробел.")
     @Test
-    public void shouldBeThrownConditionsNotMetExceptionWhenLoginСontainsSpace() {
-        ConditionsNotMetException exc = Assertions.assertThrows(ConditionsNotMetException.class, () -> {
+    public void shouldBeThrownValidationExceptionWhenLoginСontainsSpace() {
+        ValidationException exc = Assertions.assertThrows(ValidationException.class, () -> {
             User user = new User();
             user.setEmail("w@e");
             user.setLogin("rrr iii");

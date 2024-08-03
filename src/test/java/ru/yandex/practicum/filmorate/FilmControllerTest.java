@@ -1,19 +1,23 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.*;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
-import ru.yandex.practicum.filmorate.exception.DateIsNotValidException;
-import ru.yandex.practicum.filmorate.exception.InvalidNumericValueException;
-import ru.yandex.practicum.filmorate.exception.LengthOfFieldIsNotValidException;
+import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Film;
+
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 public class FilmControllerTest {
-    FilmController filmController = new FilmController();
+    private InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
+    private FilmService filmService = new FilmService();
+    private FilmController filmController = new FilmController(inMemoryFilmStorage, filmService);
 
     @DisplayName("Должнен быть добавлен фильм")
     @Test
@@ -24,16 +28,16 @@ public class FilmControllerTest {
         film.setDescription("Описание первого фильма");
         film.setReleaseDate((LocalDate.of(1995, 12, 28)));
         film.setDuration(31L);
-        int countFilm = filmController.findAll().size();
+        int countFilm = inMemoryFilmStorage.getFilms().size();
         filmController.create(film);
-        int countFilmNew = filmController.findAll().size();
+        int countFilmNew = inMemoryFilmStorage.getFilms().size();
         assertEquals(countFilm + 1, countFilmNew, "Неверное количество фильмов");
     }
 
     @DisplayName("Должно выбросываться исключение DateIsNotValidException когда дата релиза раньше 28 декабря 1895г.")
     @Test
     public void exceptionShouldBeDateIsNotValidException() {
-        DateIsNotValidException exc = Assertions.assertThrows(DateIsNotValidException.class, () -> {
+        ValidationException exc = Assertions.assertThrows(ValidationException.class, () -> {
             Film film = new Film();
             film.setName("Первый фильм");
             film.setDescription("Описание первого фильма");
@@ -48,7 +52,7 @@ public class FilmControllerTest {
             "когда нет названия фильма.")
     @Test
     public void exceptionShouldBeThrownConditionsNotMetExceptionWhenNameIsempty() {
-        ConditionsNotMetException exc = Assertions.assertThrows(ConditionsNotMetException.class, () -> {
+        ValidationException exc = Assertions.assertThrows(ValidationException.class, () -> {
             Film film = new Film();
             film.setName("");
             film.setDescription("Описание первого фильма");
@@ -59,11 +63,11 @@ public class FilmControllerTest {
         assertEquals("Название не может быть пустым", exc.getMessage());
     }
 
-    @DisplayName("Должно выбросываться исключение LengthOfFieldIsNotValidException " +
+    @DisplayName("Должно выбросываться исключение " +
             "когда описание фильма больше 200 знаков.")
     @Test
     public void exceptionShouldBeThrownLengthOfFieldIsNotValidExceptionWhenDescriptionMoreThan200Characters() {
-        LengthOfFieldIsNotValidException exc = Assertions.assertThrows(LengthOfFieldIsNotValidException.class, () -> {
+        ValidationException exc = Assertions.assertThrows(ValidationException.class, () -> {
             Film film = new Film();
             StringBuilder sbld = new StringBuilder("a");
             for (int i = 1; i < 201; i++) {
@@ -78,11 +82,11 @@ public class FilmControllerTest {
         assertEquals("Длина описания превышает 200 знаков", exc.getMessage());
     }
 
-    @DisplayName("Должно выбросываться исключение InvalidNumericValueException " +
+    @DisplayName("Должно выбросываться исключение" +
             "когда продолжительность имеет отрицательное значение.")
     @Test
     public void exceptionShouldBeThrownInvalidNumericValueExceptionWhenDurationIsNegativeValue() {
-        InvalidNumericValueException exc = Assertions.assertThrows(InvalidNumericValueException.class, () -> {
+        ValidationException exc = Assertions.assertThrows(ValidationException.class, () -> {
             Film film = new Film();
             StringBuilder sbld = new StringBuilder("a");
             for (int i = 1; i < 201; i++) {
@@ -106,9 +110,9 @@ public class FilmControllerTest {
         film.setDescription("Описание первого фильма");
         film.setReleaseDate((LocalDate.of(1995, 12, 28)));
         film.setDuration(31L);
-        int countFilm = filmController.findAll().size();
+        int countFilm = inMemoryFilmStorage.getFilms().size();;
         filmController.create(film);
-        int countFilmNew = filmController.findAll().size();
+        int countFilmNew = inMemoryFilmStorage.getFilms().size();
         assertEquals(countFilm + 1, countFilmNew, "Неверное количество фильмов");
         Film film1 = new Film();
         film1.setId(film.getId());
@@ -120,5 +124,4 @@ public class FilmControllerTest {
         assertEquals("ОБНОВЛЕННЫЙ фильм", film.getName(), "Данные не обновились");
         assertEquals(countFilm + 1, countFilmNew, "Неверное количество фильмов после обновления");
     }
-
 }
