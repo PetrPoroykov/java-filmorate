@@ -17,5 +17,5 @@ public class Film {
     LocalDate releaseDate;
     Long duration;
 
-    Set<Long> Likes = new HashSet<>();
+    Set<Long> likes = new HashSet<>();
 }
