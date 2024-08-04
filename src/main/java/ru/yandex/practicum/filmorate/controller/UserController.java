@@ -73,20 +73,18 @@ public class UserController {
     @GetMapping("/{id}/friends/common/{otherId}")
     public Collection<User> jointFriends(@PathVariable final Long id, @PathVariable final Long otherId) {
         Set<User> friends = new HashSet<>();
-        Set<User> otherFrieds = new HashSet<>();
+        Set<User> otherFriends = new HashSet<>();
+        Set<User> common = new HashSet<>();
         for (Long friendId : userStorage.getById(id).getFriends()) {
             User user = userStorage.getById(friendId);
             friends.add(user);
+
         }
         for (Long other : userStorage.getById(otherId).getFriends()) {
             User user = userStorage.getById(other);
-            otherFrieds.add(user);
+            otherFriends.add(user);
         }
-        for (User friend : friends) {
-            if (!otherFrieds.contains(friend)) {
-                friends.remove(friend);
-            }
-        }
+        friends.retainAll(otherFriends);
         return friends;
     }
 }

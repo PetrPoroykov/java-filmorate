@@ -31,7 +31,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse сonditionsNotMetException(final ConditionsNotMetException e) {
+    public ErrorResponse conditionsNotMetException(final ConditionsNotMetException e) {
         return new ErrorResponse("Id должен быть указан");
     }
 }
