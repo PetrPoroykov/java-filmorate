@@ -1,19 +1,23 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestControllerAdvice
-@Slf4j
 public class ErrorHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(ErrorHandler.class);
+
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(final Exception e) {
-        log.warn("Error", e);
+//        log.warn("Error", e);
+        log.error(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
